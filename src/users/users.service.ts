@@ -22,8 +22,9 @@ export class UsersService {
       throw new ConflictException(`username ou email redondant. Ils doivent être unique`);
     }
     return  {
-      id: user.id,
+      id: user._id,
       email: user.email,
+      role: user.role
     };
   }
 

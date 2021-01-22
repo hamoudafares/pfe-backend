@@ -11,7 +11,7 @@ import {DeleteStudentDto} from "./dto/delete-student.dto";
 export class DeletedStudentsService {
     constructor(@InjectModel('StudentsDeleted') private readonly studentDeletedModel: Model<DeletedStudentInterface>) {}
 
-    async create(student: StudentInterface): Promise<StudentInterface> {
+    async create(student: StudentInterface): Promise<any> {
         var deleteStudentDto: DeleteStudentDto = {
             studentNumber: student.studentNumber,
             speciality: student.speciality,
@@ -31,7 +31,7 @@ export class DeletedStudentsService {
         return students;
     }
 
-    async findOneDeleted(id: string): Promise<StudentInterface> {
+    async findOneDeleted(id: string): Promise<any> {
         //verify the id is a mongoose id
         const student = await this.studentDeletedModel.findById(id).exec();
         if (!student) {
