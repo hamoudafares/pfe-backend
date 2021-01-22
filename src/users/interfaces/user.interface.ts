@@ -7,4 +7,5 @@ export interface IUser extends Document{
     email : String;
     password : String;
     salt : String;
+    role : String;
 }

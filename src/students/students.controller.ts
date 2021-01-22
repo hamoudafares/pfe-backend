@@ -14,10 +14,10 @@ export class StudentsController {
     return this.studentsService.create(createStudentDto);
   }
 
-  @Post(':id')
+ /* @Post(':id')
   recover(@Param('id') id: string){
     return this.studentsService.restore(id);
-  }
+  } */
 
   @Get()
   findAll() {

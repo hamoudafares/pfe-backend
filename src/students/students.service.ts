@@ -1,24 +1,45 @@
-import {HttpException, Injectable, NotFoundException} from '@nestjs/common';
+import { HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {StudentInterface} from "./interfaces/student.interface";
 import {CreateStudentDto} from './dto/create-student.dto';
 import {UpdateStudentDto} from './dto/update-student.dto';
-import {DeletedStudentInterface} from "./interfaces/deleted-student.interface";
 import {DeletedStudentsService} from "./deleted-students.service";
+import { UsersService } from '../users/users.service';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Injectable()
 export class StudentsService {
   constructor(@InjectModel('Student') private readonly studentModel: Model<StudentInterface>,
-              private deletedStudentService: DeletedStudentsService) {}
+              private deletedStudentService: DeletedStudentsService,
+              private usersService: UsersService) {}
 
-  async create(createStudentDto: CreateStudentDto): Promise<StudentInterface> {
-    const student = await new this.studentModel(createStudentDto);
+  async create(createStudentDto: CreateStudentDto): Promise<any> {
+    const user: CreateUserDto = {
+      familyName: createStudentDto.familyName,
+      firstName: createStudentDto.firstName,
+      cin: createStudentDto.cin,
+      email: createStudentDto.email,
+      password: createStudentDto.password,
+      role: createStudentDto.role
+    }
+    const registeredUser = await this.usersService.create(user);
+    if (!registeredUser) {
+      throw new InternalServerErrorException(500, 'Could not create the user')
+    }
+    const studentToRegister = {
+      studentNumber: createStudentDto.studentNumber,
+      speciality: createStudentDto.speciality,
+      option: createStudentDto.option,
+      annee: createStudentDto.annee,
+      user: registeredUser.id
+    }
+    const student = await new this.studentModel(studentToRegister);
     return student.save();
   }
 
   async findAll(): Promise<StudentInterface[]> {
-    const students = await this.studentModel.find().exec();
+    const students = await this.studentModel.find().populate('user').exec();
     if (!students) {
       throw new HttpException('No Students Found', 404);
     }
@@ -27,7 +48,7 @@ export class StudentsService {
 
   async findOne(id: string): Promise<StudentInterface> {
     //verify the id is a mongoose id
-    const student = await this.studentModel.findById(id).exec();
+    const student = await this.studentModel.findById(id).populate('user').exec();
     if (!student) {
       throw new HttpException('student not found', 404);
     }
@@ -51,7 +72,7 @@ export class StudentsService {
     return await this.deletedStudentService.create(student);
   }
 
-  async restore(id: string) {
+  /* async restore(id: string) {
     const deletedStudent = await this.deletedStudentService.findOneDeleted(id);
     if(!deletedStudent) {
       throw new NotFoundException(404,'could not recover student, never existed and never has been part of INSAT')
@@ -63,5 +84,5 @@ export class StudentsService {
       annee: deletedStudent.annee
     }
     return this.create(student);
-  }
+  } */
 }

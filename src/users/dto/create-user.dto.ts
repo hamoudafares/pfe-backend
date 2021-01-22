@@ -4,4 +4,5 @@ export class CreateUserDto {
     cin : String;
     email : String;
     password : String;
+    role : String;
 }
