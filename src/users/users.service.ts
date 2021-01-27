@@ -19,6 +19,7 @@ export class UsersService {
     try{
       await user.save();
     } catch (e) {
+      console.log(e);
       throw new ConflictException(`username ou email redondant. Ils doivent être unique`);
     }
     return  {
@@ -30,7 +31,6 @@ export class UsersService {
 
   findAll() : Promise<Partial<IUser[]>>{
     const users = this.userModel.find().exec();
-
     return users ;
   }
 
