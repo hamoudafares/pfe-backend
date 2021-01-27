@@ -13,6 +13,7 @@ import { TeacherSchema } from './schema/teacher.schema';
     UsersModule
   ],
   controllers: [TeachersController],
-  providers: [TeachersService]
+  providers: [TeachersService],
+  exports: [TeachersService]
 })
 export class TeachersModule {}

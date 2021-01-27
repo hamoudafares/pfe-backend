@@ -6,5 +6,6 @@ export const StudentSchema = new mongoose.Schema({
     option: {type: String, required: true},
     speciality: {type: String, required: true},
     annee: {type: String, required: true},
-    user: {type: Schema.Types.ObjectId, ref: "User", required: true}
+    user: {type: Schema.Types.ObjectId, ref: "User", required: true},
+    supervisor: {type: Schema.Types.ObjectId, ref: "Teacher", required: false}
 });
