@@ -31,7 +31,7 @@ export class TeachersService {
       user: registeredUser.id
     }
     const teacher = await new this.teacherModel(teacherToRegister);
-    const createdTeacher = teacher.save();
+    teacher.save();
     return {
       id: teacher._id,
       speciality: teacher.speciality,
@@ -78,11 +78,10 @@ export class TeachersService {
   }
 
   async update(id: string, updateTeacherDto: UpdateTeacherDto) {
-    const teacher = await this.teacherModel.findByIdAndUpdate(id, updateTeacherDto).exec();
+    const teacher = await this.teacherModel.findByIdAndUpdate(id, updateTeacherDto, {new: true}).exec();
     if(!teacher) {
       throw new HttpException('teacher not found', 404);
     }
-    // this is the value of the old teacher before the update
     return {
       id: teacher._id,
       speciality: teacher.speciality,

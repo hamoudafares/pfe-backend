@@ -58,25 +58,31 @@ export class StudentsService {
   }
 
   async addSupervisor(id: string, teacherId: any) {
-    console.log(teacherId.teacherId);
     const teacher = await this.teachersService.findOne(teacherId.teacherId);
     if (!teacher) {
       throw new HttpException('teacher not found', 404)
     }
-    const student = await this.studentModel.findByIdAndUpdate(id, {supervisor: teacher.id})
+    const student = await this.studentModel.findByIdAndUpdate(id, {supervisor: teacher.id}, {new: true}).exec();
     if(!student) {
       throw new HttpException('student not found', 404);
     }
-    // this is the value of the old student before the update
+    return student
+  }
+
+  async removeSupervisor(id: string) {
+    const student = await this.studentModel.findByIdAndUpdate(id, {supervisor: null}, {new: true}).exec();
+    if(!student) {
+      throw new HttpException('student not found', 404);
+    }
     return student
   }
 
   async update(id: string, updateStudentDto: UpdateStudentDto) {
-    const student = await this.studentModel.findByIdAndUpdate(id, updateStudentDto).exec();
-    if(!student) {
+    const student = await this.studentModel.findByIdAndUpdate(id, updateStudentDto, {new: true}).exec();
+    console.log(student);
+    /*if(!student) {
       throw new HttpException('student not found', 404);
-    }
-    // this is the value of the old student before the update
+    }*/
     return student
   }
 

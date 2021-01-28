@@ -39,6 +39,11 @@ export class StudentsController {
     return this.studentsService.addSupervisor(id, teacherId);
   }
 
+  @Patch('remove-supervisor/:id')
+  removeSupervisor(@Param('id') id: string, @Body() teacherId: any) {
+    return this.studentsService.removeSupervisor(id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.studentsService.remove(id);
