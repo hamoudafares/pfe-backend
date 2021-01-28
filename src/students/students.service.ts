@@ -7,12 +7,14 @@ import {UpdateStudentDto} from './dto/update-student.dto';
 import {DeletedStudentsService} from "./deleted-students.service";
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { TeachersService } from '../teachers/teachers.service';
 
 @Injectable()
 export class StudentsService {
   constructor(@InjectModel('Student') private readonly studentModel: Model<StudentInterface>,
               private deletedStudentService: DeletedStudentsService,
-              private usersService: UsersService) {}
+              private usersService: UsersService,
+              private teachersService: TeachersService) {}
 
   async create(createStudentDto: CreateStudentDto): Promise<any> {
     const user: CreateUserDto = {
@@ -39,7 +41,7 @@ export class StudentsService {
   }
 
   async findAll(): Promise<StudentInterface[]> {
-    const students = await this.studentModel.find().populate('user').exec();
+    const students = await this.studentModel.find().populate('user').populate('supervisor').exec();
     if (!students) {
       throw new HttpException('No Students Found', 404);
     }
@@ -48,19 +50,39 @@ export class StudentsService {
 
   async findOne(id: string): Promise<StudentInterface> {
     //verify the id is a mongoose id
-    const student = await this.studentModel.findById(id).populate('user').exec();
+    const student = await this.studentModel.findById(id).populate('user').populate('supervisor').exec();
     if (!student) {
       throw new HttpException('student not found', 404);
     }
     return student;
   }
 
-  async update(id: string, updateStudentDto: UpdateStudentDto) {
-    const student = await this.studentModel.findByIdAndUpdate(id, updateStudentDto).exec();
+  async addSupervisor(id: string, teacherId: any) {
+    const teacher = await this.teachersService.findOne(teacherId.teacherId);
+    if (!teacher) {
+      throw new HttpException('teacher not found', 404)
+    }
+    const student = await this.studentModel.findByIdAndUpdate(id, {supervisor: teacher.id}, {new: true}).exec();
     if(!student) {
       throw new HttpException('student not found', 404);
     }
-    // this is the value of the old student before the update
+    return student
+  }
+
+  async removeSupervisor(id: string) {
+    const student = await this.studentModel.findByIdAndUpdate(id, {supervisor: null}, {new: true}).exec();
+    if(!student) {
+      throw new HttpException('student not found', 404);
+    }
+    return student
+  }
+
+  async update(id: string, updateStudentDto: UpdateStudentDto) {
+    const student = await this.studentModel.findByIdAndUpdate(id, updateStudentDto, {new: true}).exec();
+    console.log(student);
+    /*if(!student) {
+      throw new HttpException('student not found', 404);
+    }*/
     return student
   }
 

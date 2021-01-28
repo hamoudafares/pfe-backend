@@ -1,12 +1,11 @@
-import { HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import {InjectModel} from "@nestjs/mongoose";
-import {Model} from "mongoose";
-import {TeacherInterface} from "./interfaces/teacher.interface";
-import {CreateTeacherDto} from './dto/create-teacher.dto';
-import {UpdateTeacherDto} from './dto/update-teacher.dto';
+import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { TeacherInterface } from './interfaces/teacher.interface';
+import { CreateTeacherDto } from './dto/create-teacher.dto';
+import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import Any = jasmine.Any;
 
 @Injectable()
 export class TeachersService {
@@ -32,8 +31,9 @@ export class TeachersService {
       user: registeredUser.id
     }
     const teacher = await new this.teacherModel(teacherToRegister);
-    const createdTeacher = teacher.save();
+    teacher.save();
     return {
+      id: teacher._id,
       speciality: teacher.speciality,
       annee: teacher.annee,
       email: teacher.user['email'],
@@ -50,6 +50,7 @@ export class TeachersService {
     let teachersToReturn = [];
     teachers.forEach(teacher => {
       teachersToReturn.push({
+        id: teacher._id,
         speciality: teacher.speciality,
         annee: teacher.annee,
         email: teacher.user['email'],
@@ -66,23 +67,23 @@ export class TeachersService {
     if (!teacher) {
       throw new HttpException('teacher not found', 404);
     }
-    const teacherToReturn = {
+    return {
+      id: teacher._id,
       speciality: teacher.speciality,
       annee: teacher.annee,
       email: teacher.user['email'],
       firstName: teacher.user['firstName'],
       familyName: teacher.user['familyName']
-    }
-    return teacherToReturn;
+    };
   }
 
   async update(id: string, updateTeacherDto: UpdateTeacherDto) {
-    const teacher = await this.teacherModel.findByIdAndUpdate(id, updateTeacherDto).exec();
+    const teacher = await this.teacherModel.findByIdAndUpdate(id, updateTeacherDto, {new: true}).exec();
     if(!teacher) {
       throw new HttpException('teacher not found', 404);
     }
-    // this is the value of the old teacher before the update
     return {
+      id: teacher._id,
       speciality: teacher.speciality,
       annee: teacher.annee,
       email: teacher.user['email'],
@@ -98,6 +99,7 @@ export class TeachersService {
     }
     // return await this.deletedStudentService.create(student);
     return {
+      id: teacher._id,
       speciality: teacher.speciality,
       annee: teacher.annee,
       email: teacher.user['email'],
