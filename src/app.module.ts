@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from './users/users.module';
+import { PresentationModule } from './presentation/presentation.module';
+import { SessionModule } from './session/session.module';
 import { StudentsModule } from './students/students.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { MulterModule } from '@nestjs/platform-express';

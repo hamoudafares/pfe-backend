@@ -1,11 +1,10 @@
-import {ConflictException, HttpException, Injectable, NotFoundException} from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {IUser} from "./interfaces/user.interface";
 import * as bcrypt from 'bcrypt';
-import {query} from "express";
 
 @Injectable()
 export class UsersService {
@@ -13,20 +12,15 @@ export class UsersService {
   constructor(@InjectModel('User') private readonly userModel : Model<IUser>){
   }
   async create(createUserDto: CreateUserDto): Promise<Partial<IUser>>{
+    const found_user = await this.userModel.findOne({'email' : createUserDto.email , 'cin' : createUserDto.cin });
+    if (found_user ){
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    }
     const user = await new this.userModel(createUserDto);
     user.salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, user.salt);
-    try{
-      await user.save();
-    } catch (e) {
-      console.log(e);
-      throw new ConflictException(`username ou email redondant. Ils doivent être unique`);
-    }
-    return  {
-      id: user._id,
-      email: user.email,
-      role: user.role
-    };
+    return await user.save();
+
   }
 
   findAll() : Promise<Partial<IUser[]>>{
@@ -34,8 +28,8 @@ export class UsersService {
     return users ;
   }
 
-  findOne(id: string) : Promise<Partial<IUser>> {
-    const user = this.userModel.findOne({'_id' : id}).exec();
+  async findOne(id: string) : Promise<Partial<IUser>> {
+    const user = await this.userModel.findOne({'_id' : id}).exec();
     if (!user){
       throw new HttpException("Not Found", 404);
     }
