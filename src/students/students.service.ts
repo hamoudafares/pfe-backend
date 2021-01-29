@@ -1,4 +1,4 @@
-import { HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {StudentInterface} from "./interfaces/student.interface";
@@ -8,6 +8,7 @@ import {DeletedStudentsService} from "./deleted-students.service";
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { TeachersService } from '../teachers/teachers.service';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class StudentsService {
@@ -57,8 +58,8 @@ export class StudentsService {
     return student;
   }
 
-  async addSupervisor(id: string, teacherId: any) {
-    const teacher = await this.teachersService.findOne(teacherId.teacherId);
+  async addSupervisor(id: string, teacherCredentials: any) {
+    const teacher = await this.teachersService.findOne(teacherCredentials.teacherId);
     if (!teacher) {
       throw new HttpException('teacher not found', 404)
     }
@@ -107,4 +108,49 @@ export class StudentsService {
     }
     return this.create(student);
   } */
+
+  async addPfe(id: string, file: any, pfe: any, req: Request) {
+    let doc = req.protocol + '://' +req.get('host');
+    //check if there's a file uploaded
+    if (file) {
+      doc = doc + '/uploads/' + file['originalname']
+      pfe.rapport = doc;
+    } else {
+      console.log('no files uploaded')
+    }
+    const student = await this.studentModel.findByIdAndUpdate(id, {pfe: pfe}, {new: true}).exec();
+    if(!student) {
+      throw new HttpException('student not found', 404);
+    }
+    return student
+  }
+
+  async updatePfe(id: string, file: any, pfe: any, req: Request) {
+    const edits = {};
+    let doc = req.protocol + '://' +req.get('host');
+    //check if there's a file uploaded
+    if (file) {
+      doc = doc + '/uploads/' + file['originalname']
+      edits['pfe.rapport'] = doc
+    } else {
+      console.log('no files uploaded')
+    }
+    for (const key in pfe) {
+      console.log(key + ' ' + pfe[key]);
+      edits['pfe.'+key] = pfe[key];
+    }
+    const student = await this.studentModel.findByIdAndUpdate(id, {$set: edits}, {new: true}).exec();
+    if(!student) {
+      throw new HttpException('student not found', 404);
+    }
+    return student
+  }
+
+  async getRapport(image: string, res: Response) {
+    const response = await res.sendFile(image, { root: './uploads' });
+    return {
+      status: HttpStatus.OK,
+      data: response,
+    };
+  }
 }

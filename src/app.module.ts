@@ -5,9 +5,20 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UsersModule } from './users/users.module';
 import { StudentsModule } from './students/students.module';
 import { TeachersModule } from './teachers/teachers.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
+
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb+srv://nour:nour@cluster0.0ogrz.mongodb.net/pfe_manager?retryWrites=true&w=majority',{ dbName: 'test', useNewUrlParser: true }), UsersModule, StudentsModule, TeachersModule],
+  imports: [
+    MongooseModule.forRoot('mongodb+srv://nour:nour@cluster0.0ogrz.mongodb.net/pfe_manager?retryWrites=true&w=majority',{ dbName: 'test', useNewUrlParser: true }),
+    MulterModule.register({ dest: './uploads', }),
+    UsersModule,
+    StudentsModule,
+    TeachersModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
