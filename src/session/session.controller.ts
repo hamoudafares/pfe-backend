@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common'
 import { SessionService } from './session.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
+import { AddPresidentDto } from '../presentation/dto/add-president.dto';
 
 @Controller('session')
 export class SessionController {
@@ -30,5 +31,15 @@ export class SessionController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.sessionService.remove(id);
+  }
+  @Put('add-president/:id')
+  addPresident(@Param('id') id: string, @Body() addPresidentDto: AddPresidentDto) {
+    return this.sessionService.addPresident(id, addPresidentDto);
+  }
+
+
+  @Put('remove-president/:id')
+  removePresident(@Param('id') id: string) {
+    return this.sessionService.removePresident(id);
   }
 }
