@@ -7,6 +7,7 @@ import {DeletedStudentsService} from "./deleted-students.service";
 import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users/users.module';
 import { TeachersModule } from '../teachers/teachers.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [MongooseModule.forFeature([
