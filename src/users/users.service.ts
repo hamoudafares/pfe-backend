@@ -25,7 +25,6 @@ export class UsersService {
 
   findAll() : Promise<Partial<IUser[]>>{
     const users = this.userModel.find().exec();
-
     return users ;
   }
 

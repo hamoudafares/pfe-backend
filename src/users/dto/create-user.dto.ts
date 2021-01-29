@@ -1,7 +1,8 @@
 export class CreateUserDto {
-    firstName : string;
-    familyName : string;
-    cin : string;
-    email : string;
-    password : string;
+    firstName : String;
+    familyName : String;
+    cin : String;
+    email : String;
+    password : String;
+    role : String;
 }
