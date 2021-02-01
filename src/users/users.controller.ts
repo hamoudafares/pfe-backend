@@ -2,6 +2,7 @@ import {Controller, Get, Post, Body, Put, Param, Delete, Query} from '@nestjs/co
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('user')
 export class UsersController {
@@ -10,6 +11,11 @@ export class UsersController {
   @Post()
   public async create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Post('multiple')
+  public async createMultipleUsers(@Body() createUsersDto: [CreateUserDto]) {
+    return this.usersService.createMultipleUsers(createUsersDto);
   }
 
   @Get()
@@ -31,6 +37,10 @@ export class UsersController {
   @Put('/:id')
   public async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
+  }
+  @Put('change-password/:id')
+  public async changePassword(@Param('id') id: string, @Body() changePasswordDto: ChangePasswordDto) {
+    return this.usersService.changepassword(id, changePasswordDto);
   }
 
    @Delete(':id')
