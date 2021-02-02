@@ -2,6 +2,7 @@ import {Controller, Get, Post, Body, Put, Param, Delete, Query} from '@nestjs/co
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('user')
 export class UsersController {
@@ -36,5 +37,10 @@ export class UsersController {
    @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post('login')
+  login(@Body() loginUserDto: LoginUserDto): Promise<any> {
+    return this.usersService.login(loginUserDto);
   }
 }

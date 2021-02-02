@@ -1,26 +1,28 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {InjectModel} from "@nestjs/mongoose";
-import {Model} from "mongoose";
-import {IUser} from "./interfaces/user.interface";
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { IUser } from './interfaces/user.interface';
 import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
 
-  constructor(@InjectModel('User') private readonly userModel : Model<IUser>){
+  constructor(@InjectModel('User') private readonly userModel : Model<IUser>,
+              private jwtService: JwtService){
   }
   async create(createUserDto: CreateUserDto): Promise<Partial<IUser>>{
-    const found_user = await this.userModel.findOne({'email' : createUserDto.email , 'cin' : createUserDto.cin });
-    if (found_user ){
+    const found_user = await this.userModel.findOne({$or:[{email: createUserDto.email},{cin:createUserDto.cin}]});
+    if (found_user){
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
     const user = await new this.userModel(createUserDto);
     user.salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, user.salt);
     return await user.save();
-
   }
 
   findAll() : Promise<Partial<IUser[]>>{
@@ -72,5 +74,21 @@ export class UsersService {
       new NotFoundException(`Le todo d'id ${id} n'existe pas`);
     }
     return await user.save();
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const user = await this.userModel.findOne({email: loginUserDto.email});
+    if(!user) {
+      throw new NotFoundException('wrong email or password');
+    }
+    if(await bcrypt.compare(loginUserDto.password, user.password)) {
+      const payload = {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+      return this.jwtService.sign(payload)
+    }
+    throw new NotFoundException('wrong email or password');
   }
 }
