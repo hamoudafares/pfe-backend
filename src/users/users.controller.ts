@@ -3,12 +3,15 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { Roles } from '../authorization/roles.decorator';
+import { Role } from '../authorization/role.enum';
 
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Roles(Role.Admin)
   public async create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }

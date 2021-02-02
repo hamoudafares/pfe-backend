@@ -10,6 +10,8 @@ import { TeachersModule } from './teachers/teachers.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './authorization/roles.guard';
 
 
 
@@ -22,6 +24,11 @@ import { join } from 'path';
     TeachersModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    }
+  ],
 })
 export class AppModule {}
