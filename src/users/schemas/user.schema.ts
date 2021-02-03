@@ -8,6 +8,8 @@ export const UserSchema = new mongoose.Schema(
         email : { type : String , required : true , unique : true},
         password : { type : String , required : true},
         salt : { type : String , required : true},
-        role : { type : String, required : true}
+        sex : { type : String , required : false},
+        linkedInLink: { type : String , required : false},
+        role : { type : [String], required : true}
     }
 );

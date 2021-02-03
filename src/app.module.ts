@@ -11,7 +11,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './authorization/roles.guard';
+import { RolesGuard } from './authorization/guards/roles.guard';
+import { passportJwtStrategy } from './users/auth-strategy/passport-jwt.strategy';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './authorization/guards/jwt.auth.guard';
 
 
 
@@ -24,11 +27,12 @@ import { RolesGuard } from './authorization/roles.guard';
     TeachersModule
   ],
   controllers: [AppController],
-  providers: [AppService,
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    }
-  ],
+  providers: [AppService,  {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard,
+  },{
+    provide: APP_GUARD,
+    useClass: RolesGuard,
+  }],
 })
 export class AppModule {}

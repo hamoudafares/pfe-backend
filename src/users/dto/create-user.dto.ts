@@ -3,6 +3,8 @@ export class CreateUserDto {
     familyName : string;
     cin : string;
     email : string;
+    sex : string;
+    linkedInLink : string;
     password : string;
     role : string;
 }

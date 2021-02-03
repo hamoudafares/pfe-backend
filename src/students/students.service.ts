@@ -17,15 +17,19 @@ export class StudentsService {
               private usersService: UsersService,
               private teachersService: TeachersService) {}
 
-  async create(createStudentDto: CreateStudentDto): Promise<any> {
-    const user: CreateUserDto = {
+  async create(createStudentDto: Partial<CreateStudentDto>): Promise<any> {
+    const user: Partial<CreateUserDto> = {
       familyName: createStudentDto.familyName,
       firstName: createStudentDto.firstName,
       cin: createStudentDto.cin,
       email: createStudentDto.email,
       password: createStudentDto.password,
       role: createStudentDto.role
-    }
+    };
+    if (createStudentDto.sex)
+        user.sex = createStudentDto.sex ;
+    if (createStudentDto.linkedInLink)
+        user.linkedInLink = createStudentDto.linkedInLink;
     const registeredUser = await this.usersService.create(user);
     if (!registeredUser) {
       throw new InternalServerErrorException(500, 'Could not create the user')

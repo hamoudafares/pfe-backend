@@ -5,5 +5,7 @@ export class UpdateUserDto  {
   firstName : string;
   familyName : string;
   cin : string;
+  sex : string;
+  linkedInLink : string;
   email : string;
 }

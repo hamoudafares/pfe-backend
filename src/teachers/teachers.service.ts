@@ -12,15 +12,19 @@ export class TeachersService {
   constructor(@InjectModel('Teacher') private readonly teacherModel: Model<TeacherInterface>,
               private usersService: UsersService) {}
 
-  async create(createTeacherDto: CreateTeacherDto): Promise<any> {
-    const user: CreateUserDto = {
+  async create(createTeacherDto: Partial<CreateTeacherDto>): Promise<any> {
+    const user: Partial<CreateUserDto> = {
       familyName: createTeacherDto.familyName,
       firstName: createTeacherDto.firstName,
       cin: createTeacherDto.cin,
       email: createTeacherDto.email,
       password: createTeacherDto.password,
       role: createTeacherDto.role
-    }
+    };
+    if (createTeacherDto.sex)
+      user.sex = createTeacherDto.sex ;
+    if (createTeacherDto.linkedInLink)
+      user.linkedInLink = createTeacherDto.linkedInLink;
     const registeredUser = await this.usersService.create(user);
     if (!registeredUser) {
       throw new InternalServerErrorException(500, 'Could not create the user')

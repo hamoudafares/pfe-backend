@@ -18,6 +18,8 @@ import {DeletedStudentsService} from "./deleted-students.service";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Request } from 'express';
+import { Roles } from '../authorization/decorators/roles.decorator';
+import { Role } from '../authorization/role.enum';
 
 
 @Controller('students')
@@ -26,6 +28,7 @@ export class StudentsController {
               private readonly deletedStudentsService: DeletedStudentsService) {}
 
   @Post()
+  @Roles(Role.Admin)
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
@@ -46,11 +49,13 @@ export class StudentsController {
   }
 
   @Patch(':id')
+  @Roles(Role.Student)
   update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
     return this.studentsService.update(id, updateStudentDto);
   }
 
   @Patch('add-supervisor/:id')
+  @Roles(Role.Student)
   addSupervisor(@Param('id') id: string, @Body() teacherCredentials: any) {
     return this.studentsService.addSupervisor(id, teacherCredentials);
   }
@@ -68,6 +73,7 @@ export class StudentsController {
       })
     })
   )
+  @Roles(Role.Student)
   addPfe(@UploadedFile() file, @Param('id') id: string, @Body() pfe: Body, @Req() req: Request) {
     return this.studentsService.addPfe(id, file, pfe, req);
   }
@@ -85,6 +91,7 @@ export class StudentsController {
       })
     })
   )
+  @Roles(Role.Student)
   updatePfe(@UploadedFile() file, @Param('id') id: string, @Body() pfe: Body, @Req() req: Request) {
     return this.studentsService.updatePfe(id, file, pfe, req);
   }
@@ -95,11 +102,13 @@ export class StudentsController {
   }
 
   @Patch('remove-supervisor/:id')
+  @Roles(Role.Student)
   removeSupervisor(@Param('id') id: string) {
     return this.studentsService.removeSupervisor(id);
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   remove(@Param('id') id: string) {
     return this.studentsService.remove(id);
   }
