@@ -150,11 +150,29 @@ export class StudentsService {
     return student
   }
 
+  async deletePfe(id: string) {
+    const student = await this.studentModel.findByIdAndUpdate(id, {pfe: null}, {new: true}).exec();
+    if(!student) {
+      throw new HttpException('student not found', 404);
+    }
+    return student
+  }
+
   async getRapport(image: string, res: Response) {
     const response = await res.sendFile(image, { root: './uploads' });
     return {
       status: HttpStatus.OK,
       data: response,
     };
+  }
+
+  async validatePfe(id: string) {
+    const edits = {}
+    edits['pfe.valid'] = true
+    const student = await this.studentModel.findByIdAndUpdate(id, {$set: edits}, {new: true}).exec();
+    if(!student) {
+      throw new HttpException('student not found', 404);
+    }
+    return student
   }
 }

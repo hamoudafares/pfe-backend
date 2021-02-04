@@ -13,14 +13,17 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { IUser } from './interfaces/user.interface';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel('User') private readonly userModel: Model<IUser>,
     private jwtService: JwtService,
+    private mailService: MailService,
     @InjectConnection() private connection: Connection,
   ) {}
+
   async create(createUserDto: Partial<CreateUserDto>): Promise<Partial<IUser>> {
     const found_user = await this.userModel.findOne({
       $or: [{ email: createUserDto.email }, { cin: createUserDto.cin }],
@@ -28,6 +31,8 @@ export class UsersService {
     if (found_user) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
+    createUserDto.password = Math.random().toString(36).slice(-8);
+    this.mailService.sendMail(createUserDto.email, createUserDto.password);
     const user = await new this.userModel(createUserDto);
     user.salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(user.password, user.salt);
@@ -39,7 +44,9 @@ export class UsersService {
     session.startTransaction();
     for (const createUserDto of createUsersDto) {
       const found_user = await this.userModel
-        .findOne({ email: createUserDto.email, cin: createUserDto.cin })
+        .findOne({
+          $or: [{ email: createUserDto.email }, { cin: createUserDto.cin }],
+        })
         .session(session);
       if (found_user) {
         throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
@@ -52,8 +59,9 @@ export class UsersService {
     session.endSession();
     return true;
   }
-  findAll(): Promise<Partial<IUser[]>> {
-    const users = this.userModel.find().exec();
+
+  async findAll(): Promise<Partial<IUser[]>> {
+    const users = await this.userModel.find().exec();
     return users;
   }
 
@@ -102,6 +110,7 @@ export class UsersService {
     }
     return await user.save();
   }
+
   async changepassword(
     id: string,
     changePasswordDto: ChangePasswordDto,
