@@ -5,6 +5,4 @@ export class CreateStudentDto extends CreateUserDto{
     readonly option: string;
     readonly speciality: string;
     readonly annee: string;
-    readonly sex: string;
-    readonly linkedInLink: string;
 }
