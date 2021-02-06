@@ -20,6 +20,7 @@ import { diskStorage } from 'multer';
 import { Request } from 'express';
 import { Roles } from '../authorization/decorators/roles.decorator';
 import { Role } from '../authorization/role.enum';
+import { Public } from '../authorization/decorators/ispublic.decorator';
 
 
 @Controller('students')
@@ -94,6 +95,18 @@ export class StudentsController {
   @Roles(Role.Student)
   updatePfe(@UploadedFile() file, @Param('id') id: string, @Body() pfe: Body, @Req() req: Request) {
     return this.studentsService.updatePfe(id, file, pfe, req);
+  }
+
+  @Patch('/delete-pfe/:id')
+  @Roles(Role.Student)
+  removePfe(@Param('id') id: string) {
+    return this.studentsService.deletePfe(id);
+  }
+
+  @Patch('/validate-pfe/:id')
+  @Roles(Role.Admin)
+  validatePfe(@Param('id') id: string) {
+    return this.studentsService.validatePfe(id);
   }
 
   @Get('get-image/:imagename')

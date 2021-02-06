@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { passportJwtStrategy } from './auth-strategy/passport-jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from '../authorization/guards/roles.guard';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { RolesGuard } from '../authorization/guards/roles.guard';
         expiresIn: 86400
       }
     }),
-    PassportModule.register({defaultStrategy: 'jwt'})
+    PassportModule.register({defaultStrategy: 'jwt'}),
+    MailModule
   ],
   controllers: [UsersController],
   providers: [UsersService, passportJwtStrategy],

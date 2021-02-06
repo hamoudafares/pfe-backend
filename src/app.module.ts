@@ -15,6 +15,9 @@ import { RolesGuard } from './authorization/guards/roles.guard';
 import { passportJwtStrategy } from './users/auth-strategy/passport-jwt.strategy';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './authorization/guards/jwt.auth.guard';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
 
 
 
@@ -22,11 +25,38 @@ import { JwtAuthGuard } from './authorization/guards/jwt.auth.guard';
   imports: [
     MongooseModule.forRoot('mongodb+srv://nour:nour@cluster0.0ogrz.mongodb.net/pfe_manager?retryWrites=true&w=majority',{ dbName: 'test', useNewUrlParser: true }),
     MulterModule.register({ dest: './uploads', }),
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: {
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          secure: false, // true for 465, false for other ports
+          auth: {
+            user: process.env.EMAIL_ID, // generated ethereal user
+            pass: process.env.EMAIL_PASS // generated ethereal password
+          },
+          tls: {
+            rejectUnauthorized: false
+          },
+        },
+        defaults: {
+          from:'uni.insat@outlook.com',
+        },
+        template: {
+          dir: __dirname + '/templates',
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+    }),
     UsersModule,
     StudentsModule,
     TeachersModule,
     SessionModule,
-    PresentationModule
+    PresentationModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService,  {

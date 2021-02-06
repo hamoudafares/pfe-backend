@@ -3,7 +3,7 @@ import { Schema } from 'mongoose';
 
 const pfe = new mongoose.Schema({
     sujet: {type: String, required: true},
-    rapport: {type: String, required: true},
+    rapport: {type: String, required: false},
     entreprise: {type: String, required: true},
     mission: {type: [String], required: true},
     motsCles: {type: [String], required: true},
