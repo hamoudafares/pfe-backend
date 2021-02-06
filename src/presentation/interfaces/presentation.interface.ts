@@ -6,5 +6,5 @@ export interface IPresentation extends Document{
   jury : [string],
   president : string,
   student : string,
-  session : string
+  session : any
 }

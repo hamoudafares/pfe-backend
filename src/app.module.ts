@@ -56,6 +56,7 @@ import { MailModule } from './mail/mail.module';
     TeachersModule,
     MailModule,
     PresentationModule
+    SessionModule
   ],
   controllers: [AppController],
   providers: [AppService,  {

@@ -61,6 +61,13 @@ export class StudentsService {
     }
     return students;
   }
+  async getStudentsForSupervisor(teacherID : string): Promise<StudentInterface[]> {
+    const students = await this.studentModel.find().where('supervisor').populate('user').populate('supervisor').exec();
+    if (!students) {
+      throw new HttpException('No Students Found', 404);
+    }
+    return students;
+  }
 
   async findOne(id: string): Promise<StudentInterface> {
     //verify the id is a mongoose id
