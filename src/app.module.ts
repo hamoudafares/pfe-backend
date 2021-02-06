@@ -24,7 +24,9 @@ import { JwtAuthGuard } from './authorization/guards/jwt.auth.guard';
     MulterModule.register({ dest: './uploads', }),
     UsersModule,
     StudentsModule,
-    TeachersModule
+    TeachersModule,
+    SessionModule,
+    PresentationModule
   ],
   controllers: [AppController],
   providers: [AppService,  {
