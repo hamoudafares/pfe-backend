@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Patch, Query } from '@nestjs/common';
 import { PresentationService } from './presentation.service';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
@@ -7,6 +7,7 @@ import { SetSessionDto } from './dto/set-session.dto';
 import { SetStudentDto } from './dto/set-student.dto';
 import { SetJuryDto } from './dto/set-jury.dto';
 import { RemoveJuryMemberDto } from './dto/remove-juryMember.dto';
+import { Public } from '../authorization/decorators/ispublic.decorator';
 import { FindPresentationPerTeacherPerYearDto } from './dto/findPresentationPerTeacherPerYear.dto';
 
 @Controller('presentation')
@@ -24,6 +25,12 @@ export class PresentationController {
     return this.presentationService.findAll();
   }
 
+
+  @Public()
+  @Get('/date')
+  findByDate(@Query() query) {
+    return this.presentationService.findByDate(query['date_from'], query['date_to']);
+
   @Get('findPresentationsPerTeacherPerYear/:teacherID/:anneeUniversitaire')
   findPresentationsPerTeacherPerYear(
     @Param('teacherID') teacherID: string,
@@ -31,7 +38,6 @@ export class PresentationController {
     const findPresentationPerTeacherPerYearDto = new FindPresentationPerTeacherPerYearDto();
     findPresentationPerTeacherPerYearDto.teacherID = teacherID;
     findPresentationPerTeacherPerYearDto.anneeUniversitaire = anneeUniversitaire;
-    return this.presentationService.findPresentationsPerTeacherPerYear(findPresentationPerTeacherPerYearDto);
   }
 
   @Get(':id')

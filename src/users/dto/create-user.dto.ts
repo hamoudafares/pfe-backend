@@ -5,6 +5,7 @@ export class CreateUserDto {
     email : string;
     sex : string;
     linkedInLink : string;
+    image: string;
     password : string;
     role : string;
 }

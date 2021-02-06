@@ -2,7 +2,7 @@ import { Document, Schema } from 'mongoose';
 
 export interface IPresentation extends Document{
   room : string,
-  datetime : string,
+  datetime : Date,
   jury : [string],
   president : string,
   student : string,

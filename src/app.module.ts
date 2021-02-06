@@ -54,9 +54,9 @@ import { MailModule } from './mail/mail.module';
     UsersModule,
     StudentsModule,
     TeachersModule,
-    SessionModule,
-    PresentationModule,
-    MailModule
+    MailModule,
+    PresentationModule
+    SessionModule
   ],
   controllers: [AppController],
   providers: [AppService,  {
