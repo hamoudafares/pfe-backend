@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Patch, Query } from '@nestjs/common';
 import { PresentationService } from './presentation.service';
 import { CreatePresentationDto } from './dto/create-presentation.dto';
 import { UpdatePresentationDto } from './dto/update-presentation.dto';
@@ -7,6 +7,7 @@ import { SetSessionDto } from './dto/set-session.dto';
 import { SetStudentDto } from './dto/set-student.dto';
 import { SetJuryDto } from './dto/set-jury.dto';
 import { RemoveJuryMemberDto } from './dto/remove-juryMember.dto';
+import { Public } from '../authorization/decorators/ispublic.decorator';
 
 @Controller('presentation')
 export class PresentationController {
@@ -20,6 +21,12 @@ export class PresentationController {
   @Get()
   findAll() {
     return this.presentationService.findAll();
+  }
+
+  @Public()
+  @Get('/date')
+  findByDate(@Query() query) {
+    return this.presentationService.findByDate(query['date_from'], query['date_to']);
   }
 
   @Get(':id')

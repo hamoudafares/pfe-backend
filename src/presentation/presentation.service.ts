@@ -109,6 +109,53 @@ export class PresentationService {
     return presentation ;
   }
 
+  async findByDate(date_from: string, date_to: string): Promise<Partial<IPresentation[]>> {
+    const presentation = await this.presentationModel.find({datetime: {
+        $gte: new Date(date_from),
+        $lte: new Date(date_to)
+      }}).populate({
+      path: "president",
+      populate: {
+        path: "user",
+        select: '-password -salt -role'
+      }
+    }).populate({
+      path: "student",
+      populate: {
+        path: "user",
+        select: '-password -salt -role'
+      }
+    }).populate({
+      path: "jury",
+      populate: {
+        path: "user",
+        select: '-password -salt -role'
+      }
+    }).populate({
+      path: "student",
+      populate: {
+        path: "supervisor",
+        populate: {
+          path: "user",
+          select: '-password -salt -role'
+        }
+      }
+    }).populate({
+      path: "session",
+      populate: {
+        path: "president",
+        populate: {
+          path: "user",
+          select: '-password -salt -role'
+        }
+      }
+    }).exec();
+    if(!presentation) {
+      throw new HttpException("Not Found", 404)
+    }
+    return presentation
+  }
+
   async remove(id: string) : Promise<boolean> {
     const presentation = await this.presentationModel.remove({ '_id' : id }).exec();
     if (presentation.deletedCount === 0) {
