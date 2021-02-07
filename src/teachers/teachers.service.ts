@@ -33,7 +33,7 @@ export class TeachersService {
       _id: registeredUser._id,
       speciality: createTeacherDto.speciality,
       annee: createTeacherDto.annee,
-      user: registeredUser.id
+      user: registeredUser._id
     }
     const teacher = await new this.teacherModel(teacherToRegister);
     teacher.save();

@@ -48,7 +48,7 @@ export class StudentsService {
       speciality: createStudentDto.speciality,
       option: createStudentDto.option,
       annee: createStudentDto.annee,
-      user: registeredUser.id
+      user: registeredUser._id
     }
     const student = await new this.studentModel(studentToRegister);
     return student.save();
