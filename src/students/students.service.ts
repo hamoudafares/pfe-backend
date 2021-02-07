@@ -9,7 +9,6 @@ import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { TeachersService } from '../teachers/teachers.service';
 import { Request, Response } from 'express';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
 
 @Injectable()
 export class StudentsService {
@@ -40,10 +39,12 @@ export class StudentsService {
     if (createStudentDto.linkedInLink)
         user.linkedInLink = createStudentDto.linkedInLink;
     const registeredUser = await this.usersService.create(user);
+    await registeredUser.save();
     if (!registeredUser) {
       throw new InternalServerErrorException(500, 'Could not create the user')
     }
     const studentToRegister = {
+      _id: registeredUser._id,
       studentNumber: createStudentDto.studentNumber,
       speciality: createStudentDto.speciality,
       option: createStudentDto.option,
