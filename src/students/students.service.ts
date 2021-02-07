@@ -42,6 +42,7 @@ export class StudentsService {
     if (!registeredUser) {
       throw new InternalServerErrorException(500, 'Could not create the user')
     }
+
     const studentToRegister = {
       _id: registeredUser.id,
       studentNumber: createStudentDto.studentNumber,

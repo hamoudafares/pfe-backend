@@ -42,7 +42,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(Role.Admin)
+  @Public()
+  //@Roles(Role.Admin)
   public async findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
