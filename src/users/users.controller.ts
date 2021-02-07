@@ -6,7 +6,7 @@ import {
   Put,
   Param,
   Delete,
-  Query,
+  Query, Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,7 +15,6 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { Roles } from '../authorization/decorators/roles.decorator';
 import { Role } from '../authorization/role.enum';
 import { LoginUserDto } from './dto/login-user.dto';
-
 import { Public } from '../authorization/decorators/ispublic.decorator';
 
 @Controller('user')
@@ -36,7 +35,8 @@ export class UsersController {
   }
 
   @Get()
-  @Roles(Role.Admin)
+  //@Roles(Role.Admin)
+  @Public()
   public async findAll() {
     return this.usersService.findAll();
   }
@@ -45,6 +45,11 @@ export class UsersController {
   @Roles(Role.Admin)
   public async findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
+  }
+
+  @Get('get-image/:imagename')
+  getRapport(@Param('imagename') image, @Res() res) {
+    return this.usersService.getImage(image, res);
   }
 
   @Put('/singleproperty/:id')

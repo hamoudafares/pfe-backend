@@ -29,12 +29,26 @@ export class StudentsController {
               private readonly deletedStudentsService: DeletedStudentsService) {}
 
   @Post()
-  @Roles(Role.Admin)
-  create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentsService.create(createStudentDto);
+  //@Roles(Role.Admin)
+  @Public()
+  @UseInterceptors(FileInterceptor('image',
+    {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, './uploads');
+        },
+        filename: (req, file, cb) => {
+          cb(null, file.originalname)
+        }
+      })
+    })
+  )
+  create(@Body() createStudentDto: CreateStudentDto,@UploadedFile() image, @Req() req: Request) {
+    return this.studentsService.create(createStudentDto, image, req);
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.studentsService.findAll();
   }
@@ -51,8 +65,20 @@ export class StudentsController {
 
   @Patch(':id')
   @Roles(Role.Student)
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentsService.update(id, updateStudentDto);
+  @UseInterceptors(FileInterceptor('image',
+    {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, './uploads');
+        },
+        filename: (req, file, cb) => {
+          cb(null, file.originalname)
+        }
+      })
+    })
+  )
+  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto, @UploadedFile() image, @Req() req: Request) {
+    return this.studentsService.update(id, updateStudentDto, image, req);
   }
 
   @Patch('add-supervisor/:id')
@@ -109,7 +135,7 @@ export class StudentsController {
     return this.studentsService.validatePfe(id);
   }
 
-  @Get('get-image/:imagename')
+  @Get('get-rapport/:imagename')
   getRapport(@Param('imagename') image, @Res() res) {
     return this.studentsService.getRapport(image, res);
   }

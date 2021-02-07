@@ -10,6 +10,7 @@ export class CreateUserDto {
     email : string;
     sex : string;
     linkedInLink : string;
+    image: string;
     @IsNotEmpty()
     password : string;
     @IsNotEmpty()

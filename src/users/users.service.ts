@@ -151,4 +151,12 @@ export class UsersService {
     }
     throw new NotFoundException('wrong email or password');
   }
+
+  async getImage(image: any, res: any) {
+    const response = await res.sendFile(image, { root: './uploads' });
+    return {
+      status: HttpStatus.OK,
+      data: response,
+    };
+  }
 }

@@ -11,7 +11,7 @@ export class MailService {
       .sendMail({
         to: email, // list of receivers
         from: 'uni.insat@outlook.com', // sender address
-        subject: 'Testing Nest MailerModule ✔', // Subject line
+        subject: 'Account Created PFE MANAGER ✔', // Subject line
         text: 'welcome', // plaintext body
         html: '<b>welcome to pfe platform</b>' +
           '<br><p>here is your email and password to login to the platform</p>' +

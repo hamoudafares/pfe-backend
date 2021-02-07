@@ -17,7 +17,7 @@ export class StudentsService {
               private usersService: UsersService,
               private teachersService: TeachersService) {}
 
-  async create(createStudentDto: Partial<CreateStudentDto>): Promise<any> {
+  async create(createStudentDto: Partial<CreateStudentDto>, image: any, req: Request): Promise<any> {
     const user: Partial<CreateUserDto> = {
       familyName: createStudentDto.familyName,
       firstName: createStudentDto.firstName,
@@ -26,15 +26,25 @@ export class StudentsService {
       password: createStudentDto.password,
       role: createStudentDto.role
     };
+    let imagePath = req.protocol + '://' +req.get('host');
+    //check if there's a file uploaded
+    if (image) {
+      imagePath = imagePath + '/uploads/' + image['originalname']
+      user.image = imagePath;
+    } else {
+      console.log('no image uploaded')
+    }
     if (createStudentDto.sex)
         user.sex = createStudentDto.sex ;
     if (createStudentDto.linkedInLink)
         user.linkedInLink = createStudentDto.linkedInLink;
     const registeredUser = await this.usersService.create(user);
+    await registeredUser.save();
     if (!registeredUser) {
       throw new InternalServerErrorException(500, 'Could not create the user')
     }
     const studentToRegister = {
+      _id: registeredUser._id,
       studentNumber: createStudentDto.studentNumber,
       speciality: createStudentDto.speciality,
       option: createStudentDto.option,
@@ -89,12 +99,21 @@ export class StudentsService {
     return student
   }
 
-  async update(id: string, updateStudentDto: UpdateStudentDto) {
+  async update(id: string, updateStudentDto: UpdateStudentDto, image: any, req: Request) {
+    const studentToUpdate = await this.studentModel.findById(id).populate("user").exec();
+    let imagePath = req.protocol + '://' +req.get('host');
+    //check if there's a file uploaded
+    if (image) {
+      imagePath = imagePath + '/uploads/' + image['originalname']
+      updateStudentDto.image = imagePath;
+    } else {
+      console.log('no image uploaded')
+    }
+    const user = this.usersService.update(studentToUpdate.user['_id'], updateStudentDto);
     const student = await this.studentModel.findByIdAndUpdate(id, updateStudentDto, {new: true}).exec();
-    console.log(student);
-    /*if(!student) {
+    if(!student) {
       throw new HttpException('student not found', 404);
-    }*/
+    }
     return student
   }
 
