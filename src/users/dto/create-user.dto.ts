@@ -12,7 +12,5 @@ export class CreateUserDto {
     linkedInLink : string;
     image: string;
     @IsNotEmpty()
-    password : string;
-    @IsNotEmpty()
     role : string;
 }
