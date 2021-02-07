@@ -10,7 +10,7 @@ export class CreateStudentDto extends CreateUserDto{
     readonly speciality: string;
     @IsNotEmpty()
     readonly annee: string;
-    @IsNotEmpty()
-    readonly sex: string;
+
     readonly linkedInLink: string;
+
 }
