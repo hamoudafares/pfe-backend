@@ -39,7 +39,6 @@ export class StudentsService {
     if (createStudentDto.linkedInLink)
         user.linkedInLink = createStudentDto.linkedInLink;
     const registeredUser = await this.usersService.create(user);
-    await registeredUser.save();
     if (!registeredUser) {
       throw new InternalServerErrorException(500, 'Could not create the user')
     }
@@ -50,7 +49,7 @@ export class StudentsService {
       speciality: createStudentDto.speciality,
       option: createStudentDto.option,
       annee: createStudentDto.annee,
-      user: registeredUser.id
+      user: registeredUser._id
     }
     const student = await new this.studentModel(studentToRegister);
     return student.save();
