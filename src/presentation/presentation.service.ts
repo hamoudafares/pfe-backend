@@ -195,6 +195,11 @@ export class PresentationService {
         },
       },
     }).populate({
+      path: 'student',
+      populate: {
+        path: 'pfe',
+      },
+    }).populate({
       path: 'session',
       populate: {
         path: 'president',

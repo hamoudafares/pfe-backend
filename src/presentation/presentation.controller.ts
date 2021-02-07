@@ -21,6 +21,7 @@ export class PresentationController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.presentationService.findAll();
   }

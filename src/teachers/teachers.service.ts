@@ -26,7 +26,6 @@ export class TeachersService {
     if (createTeacherDto.linkedInLink)
       user.linkedInLink = createTeacherDto.linkedInLink;
     const registeredUser = await this.usersService.create(user);
-    await registeredUser.save();
     if (!registeredUser) {
       throw new InternalServerErrorException(500, 'Could not create the user')
     }
