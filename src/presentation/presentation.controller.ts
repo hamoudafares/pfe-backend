@@ -30,6 +30,7 @@ export class PresentationController {
   @Get('/date')
   findByDate(@Query() query) {
     return this.presentationService.findByDate(query['date_from'], query['date_to']);
+  }
 
   @Get('findPresentationsPerTeacherPerYear/:teacherID/:anneeUniversitaire')
   findPresentationsPerTeacherPerYear(
