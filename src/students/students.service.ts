@@ -43,12 +43,12 @@ export class StudentsService {
       throw new InternalServerErrorException(500, 'Could not create the user')
     }
     const studentToRegister = {
-      _id: registeredUser._id,
+      _id: registeredUser.id,
       studentNumber: createStudentDto.studentNumber,
       speciality: createStudentDto.speciality,
       option: createStudentDto.option,
       annee: createStudentDto.annee,
-      user: registeredUser._id
+      user: registeredUser.id
     }
     const student = await new this.studentModel(studentToRegister);
     return student.save();
