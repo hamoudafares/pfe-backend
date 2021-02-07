@@ -11,6 +11,7 @@ export class CreateUserDto {
     sex : string;
     linkedInLink : string;
     image: string;
+    password : string;
     @IsNotEmpty()
     role : string;
 }
