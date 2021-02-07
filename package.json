@@ -31,6 +31,8 @@
     "@nestjs/platform-express": "^7.6.7",
     "@nestjs/serve-static": "^2.1.4",
     "bcrypt": "^5.0.0",
+    "class-transformer": "^0.3.2",
+    "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",
     "handlebars": "^4.7.6",
     "mongoose": "^5.11.12",
